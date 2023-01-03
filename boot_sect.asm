@@ -1,28 +1,29 @@
-; A simple boot sector that prints "Hello World"
+; A simple boot sector that prints a string
 
-mov bx, 0x0032
+[org 0x7c00] ; Tell the assembler where this code will be loaded
+             ; Automatically offsets the addresses with this value
 
-cmp bx, 0x0004 ; Compares with 4
-jle block_less_than_or_equal_4 ; If less than or equal to 4, jumps to block_less_than_4
-cmp bx, 0x0028 ; Compares with 40
-jl block_less_than_40 ; If less than 40, jumps to block block_less_than_40
-jmp block_else ; If none of the above, jumps to block block_else
+mov bx, HELLO_MSG ; bx = &HELLO_MSG
+call print_string
 
-block_less_than_or_equal_4:
-    mov al, 'A' ; Makes al = 'A'
-	call function_print_al
+mov bx, LINE_BREAK ; bx = &LINE_BREAK
+call print_string
 
-block_less_than_40:
-    mov al, 'B' ; Makes al = 'B'
-	call function_print_al
+mov bx, GOODBYE_MSG ; bx = &GOODBYE_MSG
+call print_string
 
-block_else:
-    mov al, 'C' ; Makes al = 'C'
-	call function_print_al
+jmp $ ; Halts forever
 
-function_print_al:
-    mov ah, 0x0e ; Scrolling teletype BIOS routine
-	int 0x10 ; print character in al
+%include "print_string.asm"
+
+HELLO_MSG:
+    db 'Hello, World!', 0
+
+LINE_BREAK:
+    db 0x000A, 0 ; Line break character
+
+GOODBYE_MSG:
+    db 'Goodbye', 0
 
 times 510-($-$$) db 0 ; Pads the boot sector with zeroes and adds BIOS bootable number
 dw 0xaa55 ; Lets BIOS know this is a boot sector
