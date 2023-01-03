@@ -10,17 +10,17 @@ jmp block_else ; If none of the above, jumps to block block_else
 
 block_less_than_or_equal_4:
     mov al, 'A' ; Makes al = 'A'
-	jmp block_end
+	call function_print_al
 
 block_less_than_40:
     mov al, 'B' ; Makes al = 'B'
-	jmp block_end
+	call function_print_al
 
 block_else:
     mov al, 'C' ; Makes al = 'C'
-	jmp block_end
+	call function_print_al
 
-block_end:
+function_print_al:
     mov ah, 0x0e ; Scrolling teletype BIOS routine
 	int 0x10 ; print character in al
 
