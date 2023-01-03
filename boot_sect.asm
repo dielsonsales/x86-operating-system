@@ -1,32 +1,28 @@
 ; A simple boot sector that prints "Hello World"
 
-mov ah, 0x0e ; Teletype BIOS routine
+mov bx, 0x0032
 
-mov al, 'H'
-int 0x10 ; Interrupt instruction
-mov al, 'e'
-int 0x10
-mov al, 'l'
-int 0x10
-mov al, 'l'
-int 0x10
-mov al, 'o'
-int 0x10
-mov al, ' '
-int 0x10
-mov al, 'W'
-int 0x10
-mov al, 'o'
-int 0x10
-mov al, 'r'
-int 0x10
-mov al, 'l'
-int 0x10
-mov al, 'd'
-int 0x10
+cmp bx, 0x0004 ; Compares with 4
+jle block_less_than_or_equal_4 ; If less than or equal to 4, jumps to block_less_than_4
+cmp bx, 0x0028 ; Compares with 40
+jl block_less_than_40 ; If less than 40, jumps to block block_less_than_40
+jmp block_else ; If none of the above, jumps to block block_else
 
-jmp $ ; Jump to the current address forever
+block_less_than_or_equal_4:
+    mov al, 'A' ; Makes al = 'A'
+	jmp block_end
 
-times 510-($-$$) db 0 ; Pad the boot sector with zeroes
+block_less_than_40:
+    mov al, 'B' ; Makes al = 'B'
+	jmp block_end
 
+block_else:
+    mov al, 'C' ; Makes al = 'C'
+	jmp block_end
+
+block_end:
+    mov ah, 0x0e ; Scrolling teletype BIOS routine
+	int 0x10 ; print character in al
+
+times 510-($-$$) db 0 ; Pads the boot sector with zeroes and adds BIOS bootable number
 dw 0xaa55 ; Lets BIOS know this is a boot sector
